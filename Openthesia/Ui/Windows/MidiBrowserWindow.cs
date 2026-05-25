@@ -66,8 +66,15 @@ public class MidiBrowserWindow : ImGuiWindow
                         List<string> midiFiles = new();
                         foreach (var midiPath in MidiPathsManager.MidiPaths)
                         {
-                            var files = Directory.GetFiles(midiPath, "*.mid");
-                            midiFiles.AddRange(files);
+                            try
+                            {
+                                var files = Directory.GetFiles(midiPath, "*.mid", SearchOption.AllDirectories);
+                                midiFiles.AddRange(files);
+                            }
+                            catch (Exception)
+                            {
+                                continue;
+                            }                            
                         }
                         var sortedFiles = SortFiles(midiFiles);
                         foreach (var file in sortedFiles)
