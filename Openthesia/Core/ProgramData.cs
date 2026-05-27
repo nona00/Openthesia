@@ -22,6 +22,9 @@ public static class ProgramData
         LoadSettings();
         ImGuiTheme.PushTheme();
 
+        // ScreenRecorder initialisieren und Verfügbarkeit prüfen
+        ScreenRecorder.Initialize();
+
         // Always create the SoundFonts directory if it doesn't exist (this is mainly for when building from source)
         // In a built version it will need admin privileges to create the folder if installed in certain directories (e.g Program Files (x86))
         try

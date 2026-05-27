@@ -33,27 +33,31 @@ public class SettingsWindow : ImGuiWindow
     protected override void OnImGui()
     {
         ImGui.BeginChild("Settings", ImGui.GetContentRegionAvail(), ImGuiChildFlags.None, ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar);
-        ImGui.PushFont(FontController.GetFontOfSize(22));
-
-        if (AnimatedBackground)
+        
+        using (new AutoFont(FontController.GetFontOfSize(22)))
         {
-            Drawings.RenderMatrixBackground();
+            if (AnimatedBackground)
+            {
+                Drawings.RenderMatrixBackground();
+            }
         }
 
-        ImGui.PushFont(FontController.Font16_Icon16);
-        ImGui.SetCursorScreenPos(new(22, 50));
-        if (ImGui.Button(FontAwesome6.ArrowLeftLong, ImGuiUtils.FixedSize(new Vector2(100, 50))))
+        using (new AutoFont(FontController.Font16_Icon16))
         {
-            WindowsManager.SetWindow(Enums.Windows.Home);
+            ImGui.SetCursorScreenPos(new(22, 50));
+            if (ImGui.Button(FontAwesome6.ArrowLeftLong, ImGuiUtils.FixedSize(new Vector2(100, 50))))
+            {
+                WindowsManager.SetWindow(Enums.Windows.Home);
+            }
         }
-        ImGui.PopFont();
 
-        ImGui.PushFont(FontController.Title);
-        var textPos = new Vector2(ImGui.GetIO().DisplaySize.X / 2 - ImGui.CalcTextSize("SETTINGS").X / 2, ImGui.GetIO().DisplaySize.Y / 20);
-        ImGui.SetCursorPos(textPos);
-        ImGui.Text("SETTINGS");
-        ImGui.PopFont();
-
+        using (new AutoFont(FontController.Title))
+        {
+            var textPos = new Vector2(ImGui.GetIO().DisplaySize.X / 2 - ImGui.CalcTextSize("SETTINGS").X / 2, ImGui.GetIO().DisplaySize.Y / 20);
+            ImGui.SetCursorPos(textPos);
+            ImGui.Text("SETTINGS");
+        }
+        
         ImGuiTheme.Style.FramePadding = ImGuiUtils.FixedSize(new Vector2(15));
         ImGuiTheme.PushButton(ImGuiTheme.HtmlToVec4("#0284C7"), ImGuiTheme.HtmlToVec4("#0284C7"), ImGuiTheme.HtmlToVec4("#0284C7"));
         ImGuiTheme.Style.WindowPadding = new(10);
@@ -147,14 +151,15 @@ public class SettingsWindow : ImGuiWindow
             ImGui.Text(nMidis.ToString());
             ImGui.TableSetColumnIndex(2);
             ImGuiTheme.Style.Colors[(int)ImGuiCol.Text] = new Vector4(1, 0, 0.2f, 1);
-            ImGui.PushFont(FontController.Font16_Icon12);
-            ImGui.PushID(index.ToString());
-            if (ImGui.SmallButton($"{FontAwesome6.CircleXmark}##remove_midi_path"))
+            using (new AutoFont(FontController.Font16_Icon12))
             {
-                MidiPaths.Remove(path);
+                ImGui.PushID(index.ToString());
+                if (ImGui.SmallButton($"{FontAwesome6.CircleXmark}##remove_midi_path"))
+                {
+                    MidiPaths.Remove(path);
+                }
+                ImGui.PopID();
             }
-            ImGui.PopID();
-            ImGui.PopFont();
             ImGuiTheme.Style.Colors[(int)ImGuiCol.Text] = new Vector4(1);
             index++;
         }
@@ -326,14 +331,15 @@ public class SettingsWindow : ImGuiWindow
             ImGui.Text(nSoundFont.ToString());
             ImGui.TableSetColumnIndex(2);
             ImGuiTheme.Style.Colors[(int)ImGuiCol.Text] = new Vector4(1, 0, 0.2f, 1);
-            ImGui.PushFont(FontController.Font16_Icon12);
-            ImGui.PushID(index2.ToString());
-            if (ImGui.SmallButton($"{FontAwesome6.CircleXmark}##remove_soundfont_path"))
+            using (new AutoFont(FontController.Font16_Icon12))
             {
-                SoundFontsPaths.Remove(path);
+                ImGui.PushID(index2.ToString());
+                if (ImGui.SmallButton($"{FontAwesome6.CircleXmark}##remove_soundfont_path"))
+                {
+                    SoundFontsPaths.Remove(path);
+                }
+                ImGui.PopID();
             }
-            ImGui.PopID();
-            ImGui.PopFont();
             ImGuiTheme.Style.Colors[(int)ImGuiCol.Text] = new Vector4(1);
             index2++;
 
@@ -413,7 +419,7 @@ public class SettingsWindow : ImGuiWindow
                 }
                 else
                 {
-                    VstPlayer.PluginsChain.AddPlugin(plugin);
+                    VstPlayer.PluginsChain?.AddPlugin(plugin);
                     PluginsPathManager.LoadValidInstrumentPath(file.FullName);
                 }
             }
@@ -519,7 +525,7 @@ public class SettingsWindow : ImGuiWindow
                 }
                 else
                 {
-                    VstPlayer.PluginsChain.AddPlugin(plugin);
+                    VstPlayer.PluginsChain?.AddPlugin(plugin);
                     PluginsPathManager.EffectsPath.Add(file.FullName);
                 }
             }
@@ -636,7 +642,6 @@ public class SettingsWindow : ImGuiWindow
         ImGui.EndChild();
         ImGui.EndChild();
 
-        ImGui.PopFont();
         ImGuiTheme.PushTheme();
     }
 }

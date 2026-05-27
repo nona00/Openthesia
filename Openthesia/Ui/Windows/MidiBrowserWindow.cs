@@ -48,7 +48,7 @@ public class MidiBrowserWindow : ImGuiWindow
             ImGui.PushStyleVar(ImGuiStyleVar.ChildRounding, 10f);
             ImGui.SetNextWindowPos(new Vector2((_io.DisplaySize.X - _io.DisplaySize.X / 1.2f) / 2, ImGuiUtils.FixedSize(new Vector2(120)).Y));
             Vector2 containerSize = _io.DisplaySize / 1.2f;
-            if (ImGui.BeginChild("Midi browser container", containerSize, ImGuiChildFlags.AlwaysUseWindowPadding | ImGuiChildFlags.Border))
+            if (ImGui.BeginChild("Midi browser container", containerSize, ImGuiChildFlags.AlwaysUseWindowPadding /*| ImGuiChildFlags.Border*/))
             {
                 ImGui.PopStyleVar(2);
 

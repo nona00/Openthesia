@@ -11,7 +11,6 @@ using Openthesia.Settings;
 using Openthesia.Ui.Helpers;
 using System.Numerics;
 using Veldrid;
-using ScreenRecorderLib;
 using Note = Melanchall.DryWetMidi.Interaction.Note;
 using static Openthesia.Core.ScreenCanvasControls;
 using Openthesia.Core.Plugins;
@@ -761,28 +760,31 @@ public class ScreenCanvas
             }
             ImGui.SameLine();
             // RECORD SCREEN BUTTON
-            ImGui.PushStyleColor(ImGuiCol.Text, ScreenRecorder.Status == RecorderStatus.Recording ? new Vector4(0.08f, 0.80f, 0.27f, 1) : Vector4.One);
+            bool isRecording = ScreenRecorder.IsRecording();
+            ImGui.PushStyleColor(ImGuiCol.Text, isRecording ? new Vector4(0.08f, 0.80f, 0.27f, 1) : Vector4.One);
             if (ImGui.Button($"{FontAwesome6.Video}", new(ImGuiUtils.FixedSize(new Vector2(50)).X, ImGui.GetWindowSize().Y))
                 || (ImGui.IsKeyDown(ImGuiKey.ModCtrl) && ImGui.IsKeyPressed(ImGuiKey.R)))
             {
-                switch (ScreenRecorder.Status)
+                if (ScreenRecorder.IsScreenRecorderAvailable)
                 {
-                    case RecorderStatus.Idle:
-                        ScreenRecorder.StartRecording();
-                        if (CoreSettings.VideoRecStartsPlayback)
-                        {
-                            MidiPlayer.Playback.Start();
-                            MidiPlayer.StartTimer();
-                        }
-                        break;
-                    case RecorderStatus.Recording:
+                    if (isRecording)
+                    {
                         ScreenRecorder.EndRecording();
                         MidiPlayer.SoundFontEngine?.StopAllNote(0);
                         MidiPlayer.Playback.Stop();
                         MidiPlayer.Playback.MoveToStart();
                         MidiPlayer.IsTimerRunning = false;
                         MidiPlayer.Timer = 0;
-                        break;
+                    }
+                    else
+                    {
+                        ScreenRecorder.StartRecording();
+                        if (CoreSettings.VideoRecStartsPlayback)
+                        {
+                            MidiPlayer.Playback.Start();
+                            MidiPlayer.StartTimer();
+                        }
+                    }
                 }
             }
             ImGui.PopStyleColor();
@@ -944,7 +946,9 @@ public class ScreenCanvas
 
         // BACK BUTTON
         ImGui.PushFont(FontController.Font16_Icon16);
-        ImGui.BeginDisabled(ScreenRecorder.Status == RecorderStatus.Recording);
+        bool isRecording = ScreenRecorder.IsScreenRecorderAvailable && 
+                           ScreenRecorder.Status?.ToString() == "Recording";
+        ImGui.BeginDisabled(isRecording);
         ImGui.SetCursorScreenPos(new(ImGuiUtils.FixedSize(new Vector2(25)).X, CanvasPos.Y + ImGuiUtils.FixedSize(new Vector2(50)).Y));
         if (ImGui.Button(FontAwesome6.ArrowLeftLong, ImGuiUtils.FixedSize(new Vector2(100, 50))) || ImGui.IsKeyPressed(ImGuiKey.Escape, false))
         {
@@ -1131,19 +1135,22 @@ public class ScreenCanvas
             }
             ImGui.SameLine();
             // RECORD SCREEN BUTTON
-            ImGui.PushStyleColor(ImGuiCol.Text, ScreenRecorder.Status == RecorderStatus.Recording ? new Vector4(0.08f, 0.80f, 0.27f, 1) : Vector4.One);
+            bool isRecording = ScreenRecorder.IsRecording();
+            ImGui.PushStyleColor(ImGuiCol.Text, isRecording ? new Vector4(0.08f, 0.80f, 0.27f, 1) : Vector4.One);
             if (ImGui.Button($"{FontAwesome6.Video}", new(ImGuiUtils.FixedSize(new Vector2(50)).X, ImGui.GetWindowSize().Y))
                 || (ImGui.IsKeyDown(ImGuiKey.ModCtrl) && ImGui.IsKeyPressed(ImGuiKey.R)))
             {
-                switch (ScreenRecorder.Status)
+                if (ScreenRecorder.IsScreenRecorderAvailable)
                 {
-                    case RecorderStatus.Idle:
+                    if (isRecording)
+                    {
+                        ScreenRecorder.EndRecording();
+                    }
+                    else
+                    {
                         MidiPlayer.ClearPlayback();
                         ScreenRecorder.StartRecording();
-                        break;
-                    case RecorderStatus.Recording:
-                        ScreenRecorder.EndRecording();
-                        break;
+                    }
                 }
             }
             ImGui.PopStyleColor();

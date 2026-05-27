@@ -2,7 +2,7 @@
 
 namespace Openthesia.Ui.Helpers;
 
-public class AutoFont : IDisposable
+public readonly struct AutoFont : IDisposable
 {
     public AutoFont(ImFontPtr font)
     {
