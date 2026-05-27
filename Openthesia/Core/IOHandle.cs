@@ -73,12 +73,13 @@ public static class IOHandle
         if (WindowsManager.Window == Enums.Windows.PlayMode)
         {
             int index = NoteRects.FindIndex(x => x.KeyNum == noteNumber && !x.WasReleased);
-            var n = NoteRects[index];
-            //var n = NoteRects.Find(x => x.KeyNum == noteNumber && !x.WasReleased);
-            //var n = NoteRects[NoteRects.Count - 1];
-            n.WasReleased = true;
-            n.FinalTime = n.Time;
-            NoteRects[index] = n;
+            if (index >= 0)
+            {
+                var n = NoteRects[index];
+                n.WasReleased = true;
+                n.FinalTime = n.Time;
+                NoteRects[index] = n;
+            }
         }
 
         PressedKeys.Remove(noteNumber);

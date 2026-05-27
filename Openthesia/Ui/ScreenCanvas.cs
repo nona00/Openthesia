@@ -1057,7 +1057,7 @@ public class ScreenCanvas
                         }
                         else
                         {
-                            VstPlayer.PluginsChain.AddPlugin(plugin);
+                            VstPlayer.PluginsChain?.AddPlugin(plugin);
                             PluginsPathManager.LoadValidInstrumentPath(file.FullName);
                         }
                     }
@@ -1066,7 +1066,7 @@ public class ScreenCanvas
                 ImGui.Spacing();
                 ImGui.SeparatorText("Effects");
 
-                foreach (var effect in VstPlayer.PluginsChain.FxPlugins.ToList())
+                foreach (var effect in VstPlayer.PluginsChain?.FxPlugins.ToList() ?? new List<IPlugin>())
                 {
                     ImGui.AlignTextToFramePadding();
                     ImGui.Text(effect.PluginName);
@@ -1097,7 +1097,7 @@ public class ScreenCanvas
         if (ImGui.ImageButton("SustainBtn", IOHandle.SustainPedalActive ? Drawings.SustainPedalOn : Drawings.SustainPedalOff, 
                 ImGuiUtils.FixedSize(new Vector2(50))))
         {
-            IOHandle.OnEventReceived(null, new Melanchall.DryWetMidi.Multimedia.MidiEventReceivedEventArgs(
+            IOHandle.OnEventReceived(null!, new Melanchall.DryWetMidi.Multimedia.MidiEventReceivedEventArgs(
                 new ControlChangeEvent(ControlUtilities.AsSevenBitNumber(ControlName.DamperPedal),
                 new SevenBitNumber((byte)(IOHandle.SustainPedalActive ? 0 : 100)))));
             DevicesManager.ODevice?.SendEvent(new ControlChangeEvent(new SevenBitNumber(64), new SevenBitNumber((byte)(IOHandle.SustainPedalActive ? 0 : 100))));
